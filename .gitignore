@@ -1,0 +1,13 @@
+.idea/
+.vscode/
+__pycache__/
+*.pyc
+.streamlit/
+downloads/
+venv/
+.env
+Exercitiul.py
+Lib/
+Scripts/
+etc/
+share/
