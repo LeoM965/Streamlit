@@ -23,21 +23,28 @@ st.markdown('<h1 class="main-title">Steam Market Intelligence</h1>', unsafe_allo
 
 # ── Data Processing ──────────────────────────────────────────────
 @st.cache_data
-def load_and_clean(file):
-    df = pd.read_csv(file)
+def load_and_clean(file_path_or_buffer):
+    df = pd.read_csv(file_path_or_buffer)
     df['Release_Date'] = pd.to_datetime(df['Release_Date'])
     # Calculate Rating % and Total Reviews accurately
     df['Total_Reviews'] = df['Positive_Reviews'] + df['Negative_Reviews']
     df['Rating_%'] = (df['Positive_Reviews'] / df['Total_Reviews'] * 100).fillna(0).round(1)
     return df
 
-uploaded_file = st.sidebar.file_uploader("📂 Import steam_games.csv", type=["csv"])
+import os
+csv_path = "steam_games.csv"
+remote_url = "https://raw.githubusercontent.com/LeoM965/Streamlit/main/steam_games.csv"
 
-if not uploaded_file:
-    st.info("Please upload the dataset from the sidebar to continue.")
-    st.stop()
+# Check for local file, then remote URL
+if os.path.exists(csv_path):
+    st.sidebar.success(f"✅ Loaded local: `{csv_path}`")
+    data_source = csv_path
+else:
+    # Try to use remote URL as a static source
+    data_source = remote_url
+    st.sidebar.info("🌐 Using remote static data source")
 
-df_raw = load_and_clean(uploaded_file)
+df_raw = load_and_clean(data_source)
 
 # ── Filtering ─────────────────────────────────────────────────────
 st.sidebar.header("🎯 Filters")
